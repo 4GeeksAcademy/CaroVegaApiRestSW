@@ -90,5 +90,5 @@ class UserFavoritePlanets(db.Model):
         return {
             "id": self.id,
             "user" :self.user_id,
-            "planet_id": self.people_id
+            "planet_id": self.planet_id
         }

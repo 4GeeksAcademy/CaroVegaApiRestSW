@@ -68,18 +68,52 @@ def get_planet(planet_id):
 
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
 def get_favorites(user_id):
-    favorite_people = UserFavoritePeople.query.filter_by(id=user_id).first()
-    result = favorite_people.serialize()
-    return jsonify(result), 200
+    favorite_people = UserFavoritePeople.query.filter_by(user_id=user_id)
+    results = list(map(lambda item: item.serialize(),favorite_people))
+    favorite_names_people = list(map(lambda item: get_people_name(item['people_id']), results))
+    favorite_planets = UserFavoritePlanets.query.filter_by(user_id=user_id)
+    results_planets = list(map(lambda item: item.serialize(),favorite_planets))
+    favorite_names_planets = list(map(lambda item: get_planets_name(item['planet_id']), results_planets))
+    favorites_user = favorite_names_people + favorite_names_planets
+    print(favorite_names_people)
+    print(favorite_names_planets)
+    print(favorites_user)
+    return jsonify(favorites_user), 200
 
 
-@app.route('/users/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
+@app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
 def insert_favorites_people(user_id, people_id):
+    new_favorite_people = UserFavoritePeople(user_id = user_id, people_id = people_id)
     print(user_id)
     print(people_id)
-    favorites_people=UserFavoritePeople( user_id= user_id, people_id=people_id)
-    
+    db.session.add(new_favorite_people)
+    db.session.commit()
     return jsonify({"msg": "favoritoadicionado"}), 200
+
+@app.route('/user/<int:user_id>/favorite/planet/<int:planet_id>', methods=['POST'])
+def insert_favorites_planet(user_id, planet_id):
+    new_favorite_planet = UserFavoritePlanets(user_id = user_id, planet_id = planet_id)
+    print(user_id)
+    print(planet_id)
+    db.session.add(new_favorite_planet)
+    db.session.commit()
+    return jsonify({"msg": "favoritoadicionado"}), 200
+
+def get_people_name (favorite_id):
+    person = People.query.get(favorite_id)
+    if person:
+        # Si se encontró la persona, devolver su nombre
+        return person.name
+    else:
+        return None
+def get_planets_name (favorite_id):
+    planet = Planets.query.get(favorite_id)
+    if planet:
+        
+        return planet.name
+    else:
+        return None
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
