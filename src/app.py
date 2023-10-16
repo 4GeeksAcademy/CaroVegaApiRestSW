@@ -114,6 +114,29 @@ def get_planets_name (favorite_id):
     else:
         return None
 
+@app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['DELETE'])
+def delete_favorites_people(user_id, people_id):
+    del_favorite_people = UserFavoritePeople.query.filter_by(user_id = user_id, people_id = people_id).first()
+    print(user_id)
+    print(people_id)
+    if del_favorite_people:
+        db.session.delete(del_favorite_people)
+        db.session.commit()
+        return jsonify({"msg": "favorito eliminado"}), 200
+    else:
+        return jsonify({"msg": "Favorito no encontrado"}), 404
+    
+@app.route('/user/<int:user_id>/favorite/planet/<int:planet_id>', methods=['DELETE'])
+def delete_favorites_planet(user_id, planet_id):
+    del_favorite_planet = UserFavoritePlanets.query.filter_by(user_id = user_id, planet_id = planet_id).first()
+    print(user_id)
+    print(planet_id)
+    if del_favorite_planet:
+        db.session.delete(del_favorite_planet)
+        db.session.commit()
+        return jsonify({"msg": "favorito eliminado"}), 200
+    else:
+        return jsonify({"msg": "Favorito no encontrado"}), 404
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
