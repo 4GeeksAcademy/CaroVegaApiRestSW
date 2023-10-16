@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, People, Planets, UserFavoritePeople, UserFavoritePlanets
 #from models import Person
 
 app = Flask(__name__)
@@ -37,13 +37,49 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
-def handle_hello():
+def get_users():
+    all_users = User.query.all()
+    results = list(map(lambda item: item.serialize(),all_users))
+    return jsonify(results), 200
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+@app.route('/people', methods=['GET'])
+def get_characters():
+    all_people = People.query.all()
+    results = list(map(lambda item: item.serialize(),all_people))
+    return jsonify(results), 200
 
-    return jsonify(response_body), 200
+@app.route('/people/<int:people_id>', methods=['GET'])
+def get_character(people_id):
+    character = People.query.filter_by(id=people_id).first()
+    result = character.serialize()
+    return jsonify(result), 200
+
+@app.route('/planets', methods=['GET'])
+def get_characters():
+    all_planets = Planets.query.all()
+    results = list(map(lambda item: item.serialize(),all_planets))
+    return jsonify(results), 200
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_character(planet_id):
+    planet = Planets.query.filter_by(id=planet_id).first()
+    result = planet.serialize()
+    return jsonify(result), 200
+
+@app.route('/user/<int:user_id>/favorites', methods=['GET'])
+def get_character(user_id):
+    favorite_people = UserFavoritePeople.query.filter_by(id=user_id).first()
+    result = favorite_people.serialize()
+    return jsonify(result), 200
+
+
+@app.route('/users/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
+def insert_favorites_people(user_id, people_id):
+    print(user_id)
+    print(people_id)
+    favorites_people=UserFavoritePeople( user_id= user_id, people_id=people_id)
+    
+    return jsonify({"msg": "favoritoadicionado"}), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
