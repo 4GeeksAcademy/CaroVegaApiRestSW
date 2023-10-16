@@ -55,19 +55,19 @@ def get_character(people_id):
     return jsonify(result), 200
 
 @app.route('/planets', methods=['GET'])
-def get_characters():
+def get_planets():
     all_planets = Planets.query.all()
     results = list(map(lambda item: item.serialize(),all_planets))
     return jsonify(results), 200
 
 @app.route('/planets/<int:planet_id>', methods=['GET'])
-def get_character(planet_id):
+def get_planet(planet_id):
     planet = Planets.query.filter_by(id=planet_id).first()
     result = planet.serialize()
     return jsonify(result), 200
 
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
-def get_character(user_id):
+def get_favorites(user_id):
     favorite_people = UserFavoritePeople.query.filter_by(id=user_id).first()
     result = favorite_people.serialize()
     return jsonify(result), 200

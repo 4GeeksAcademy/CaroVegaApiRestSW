@@ -81,7 +81,7 @@ class UserFavoritePeople(db.Model):
 class UserFavoritePlanets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    planet_id = db.Column(db.Integer,  db.ForeignKey('planet.id'), nullable=False)
+    planet_id = db.Column(db.Integer,  db.ForeignKey('planets.id'), nullable=False)
 
     def __repr__(self):
         return '<UserFavoritePlanets %r>' % self.id
