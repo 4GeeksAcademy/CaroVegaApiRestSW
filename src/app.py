@@ -68,6 +68,10 @@ def get_planet(planet_id):
 
 @app.route('/user/<int:user_id>/favorites', methods=['GET'])
 def get_favorites(user_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
     favorite_people = UserFavoritePeople.query.filter_by(user_id=user_id)
     results = list(map(lambda item: item.serialize(),favorite_people))
     favorite_names_people = list(map(lambda item: get_people_name(item['people_id']), results))
@@ -78,11 +82,22 @@ def get_favorites(user_id):
     print(favorite_names_people)
     print(favorite_names_planets)
     print(favorites_user)
-    return jsonify(favorites_user), 200
+    if len(favorites_user)==0:
+        return jsonify({"msg":"No tiene favoritos"}), 200
+    else:
+        return jsonify(favorites_user), 200
 
 
 @app.route('/user/<int:user_id>/favorite/people/<int:people_id>', methods=['POST'])
 def insert_favorites_people(user_id, people_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    person = People.query.get(people_id)
+    if person is None:
+        return jsonify({"error": "Personaje no encontrado"}), 404
+    
     new_favorite_people = UserFavoritePeople(user_id = user_id, people_id = people_id)
     print(user_id)
     print(people_id)
@@ -92,6 +107,14 @@ def insert_favorites_people(user_id, people_id):
 
 @app.route('/user/<int:user_id>/favorite/planet/<int:planet_id>', methods=['POST'])
 def insert_favorites_planet(user_id, planet_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    planet = Planets.query.get(planet_id)
+    if planet is None:
+        return jsonify({"error": "Planeta no encontrado"}), 404
+    
     new_favorite_planet = UserFavoritePlanets(user_id = user_id, planet_id = planet_id)
     print(user_id)
     print(planet_id)
